@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stránky | Felbiánek Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="app">
+  <div id="admin-shell">
+    <div class="page-header">
+      <div>
+        <h2>Stránky</h2>
+        <p>Texty a SEO vybraných stránek veřejného webu.</p>
+      </div>
+    </div>
+
+    <section class="panel">
+      <div class="table-wrap">
+        <table class="data" id="pages-table">
+          <thead>
+            <tr>
+              <th>Stránka</th>
+              <th>Adresa</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script src="../../assets/js/mock-data.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script>
+    AdminShell.init({ active: "stranky", title: "Stránky" });
+    const tbody = document.querySelector("#pages-table tbody");
+    AdminMock.pages.forEach((p) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><strong>${p.title}</strong></td>
+        <td class="list-meta">/${p.slug === "domu" ? "" : p.slug + "/"}</td>
+        <td class="actions"><a class="btn btn--ghost btn--sm" href="edit.html?id=${p.id}">Upravit</a></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  </script>
+</body>
+</html>

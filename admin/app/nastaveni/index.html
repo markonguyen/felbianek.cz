@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nastavení | Felbiánek Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="app">
+  <div id="admin-shell">
+    <div class="page-header">
+      <div>
+        <h2>Nastavení</h2>
+        <p>Údaje, které se zobrazují na veřejném webu.</p>
+      </div>
+    </div>
+
+    <div class="alert alert--success alert--hidden" id="saved-alert">Nastavení uloženo (prototyp).</div>
+
+    <form id="settings-form" class="form-stack">
+      <section class="panel">
+        <div class="form-stack">
+          <div class="field">
+            <label for="siteName">Název webu</label>
+            <input type="text" id="siteName" name="siteName" required>
+          </div>
+          <div class="field">
+            <label for="email">Kontaktní e-mail</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="field">
+            <label for="phone">Telefon</label>
+            <input type="tel" id="phone" name="phone">
+          </div>
+          <div class="field">
+            <label for="address">Adresa</label>
+            <input type="text" id="address" name="address">
+          </div>
+        </div>
+      </section>
+      <div class="btn-group btn-group--end">
+        <button type="submit" class="btn btn--primary">Uložit</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="../../assets/js/mock-data.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script>
+    AdminShell.init({ active: "nastaveni", title: "Nastavení" });
+    const s = AdminMock.settings;
+    document.getElementById("siteName").value = s.siteName;
+    document.getElementById("email").value = s.email;
+    document.getElementById("phone").value = s.phone;
+    document.getElementById("address").value = s.address;
+
+    document.getElementById("settings-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      AdminMock.settings.siteName = document.getElementById("siteName").value.trim();
+      AdminMock.settings.email = document.getElementById("email").value.trim();
+      AdminMock.settings.phone = document.getElementById("phone").value.trim();
+      AdminMock.settings.address = document.getElementById("address").value.trim();
+      document.getElementById("saved-alert").classList.remove("alert--hidden");
+    });
+  </script>
+</body>
+</html>

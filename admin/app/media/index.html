@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Média | Felbiánek Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="app">
+  <div id="admin-shell">
+    <div class="page-header">
+      <div>
+        <h2>Média</h2>
+        <p>Obrázky a dokumenty pro novinky i stránky.</p>
+      </div>
+    </div>
+
+    <div class="upload-zone" id="upload-zone">
+      <p><strong>Nahrát soubor</strong></p>
+      <p class="list-meta" style="margin:0">V prototypu jen ukázka – kliknutím přidá fiktivní položku.</p>
+    </div>
+
+    <div class="alert alert--success alert--hidden" id="upload-alert">Soubor „nahrán“ do knihovny (prototyp).</div>
+
+    <div class="filters" role="tablist" aria-label="Filtr médií">
+      <button type="button" class="chip is-active" data-filter="all">Vše</button>
+      <button type="button" class="chip" data-filter="image">Obrázky</button>
+      <button type="button" class="chip" data-filter="document">Dokumenty</button>
+    </div>
+
+    <div class="media-grid" id="media-grid"></div>
+  </div>
+
+  <script src="../../assets/js/mock-data.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script>
+    AdminShell.init({ active: "media", title: "Média", wide: true });
+
+    let filter = "all";
+    const imgBase = "../../assets/img/";
+
+    function render() {
+      const grid = document.getElementById("media-grid");
+      const items = AdminMock.media.filter((m) => filter === "all" || m.kind === filter);
+      grid.innerHTML = items
+        .map((m) => {
+          const thumb =
+            m.kind === "image"
+              ? `<img src="${imgBase}placeholder-cover.svg" alt="">`
+              : `<img src="${imgBase}placeholder-doc.svg" alt="">`;
+          return `
+            <article class="media-item" tabindex="0">
+              <div class="media-item__thumb">${thumb}</div>
+              <div class="media-item__meta">
+                <strong title="${m.filename}">${m.filename}</strong>
+                <span>${m.kind === "image" ? "Obrázek" : "Dokument"} · ${AdminMock.formatDate(m.createdAt)}</span>
+              </div>
+            </article>
+          `;
+        })
+        .join("");
+    }
+
+    document.querySelector(".filters").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-filter]");
+      if (!btn) return;
+      filter = btn.getAttribute("data-filter");
+      document.querySelectorAll(".chip").forEach((c) => c.classList.toggle("is-active", c === btn));
+      render();
+    });
+
+    document.getElementById("upload-zone").addEventListener("click", () => {
+      AdminMock.media.unshift({
+        id: "m" + Date.now(),
+        filename: "novy-soubor.jpg",
+        mime: "image/jpeg",
+        kind: "image",
+        url: "placeholder-cover.svg",
+        uploadedBy: "u1",
+        createdAt: new Date().toISOString().slice(0, 10),
+      });
+      document.getElementById("upload-alert").classList.remove("alert--hidden");
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

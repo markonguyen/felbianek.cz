@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Uživatelé | Felbiánek Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="app">
+  <div id="admin-shell">
+    <div id="page-actions">
+      <button type="button" class="btn btn--primary btn--sm" id="btn-add-user">Přidat uživatele</button>
+    </div>
+
+    <div class="page-header">
+      <div>
+        <h2>Uživatelé</h2>
+        <p>Editoři spravují obsah. Administrátor spravuje účty.</p>
+      </div>
+    </div>
+
+    <div class="alert alert--success alert--hidden" id="user-alert"></div>
+
+    <section class="panel">
+      <div class="table-wrap">
+        <table class="data" id="users-table">
+          <thead>
+            <tr>
+              <th>Jméno</th>
+              <th>E-mail</th>
+              <th>Role</th>
+              <th>Stav</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal" id="user-modal" aria-hidden="true">
+    <div class="modal__backdrop" data-close></div>
+    <div class="modal__dialog" role="dialog" aria-labelledby="user-modal-title">
+      <div class="modal__header">
+        <h2 id="user-modal-title">Přidat uživatele</h2>
+        <button type="button" class="btn btn--ghost btn--sm" data-close>Zavřít</button>
+      </div>
+      <form class="form-stack" id="user-form">
+        <div class="field">
+          <label for="user-name">Jméno</label>
+          <input type="text" id="user-name" required placeholder="Jana Nováková">
+        </div>
+        <div class="field">
+          <label for="user-email">E-mail</label>
+          <input type="email" id="user-email" required placeholder="jana@felbianek.cz">
+        </div>
+        <div class="field">
+          <label for="user-role">Role</label>
+          <select id="user-role">
+            <option value="editor">Editor</option>
+            <option value="admin">Administrátor</option>
+          </select>
+        </div>
+        <p class="list-meta">V ostré verzi dostane uživatel e-mail s odkazem pro nastavení hesla.</p>
+        <div class="btn-group btn-group--end">
+          <button type="button" class="btn btn--secondary" data-close>Zrušit</button>
+          <button type="submit" class="btn btn--primary">Pozvat</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../../assets/js/mock-data.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script>
+    AdminShell.init({ active: "uzivatele", title: "Uživatelé", wide: true });
+
+    function roleLabel(role) {
+      return role === "admin" ? "Administrátor" : "Editor";
+    }
+
+    function render() {
+      const tbody = document.querySelector("#users-table tbody");
+      tbody.innerHTML = "";
+      AdminMock.users.forEach((u) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${u.name}</strong></td>
+          <td>${u.email}</td>
+          <td><span class="badge badge--role">${roleLabel(u.role)}</span></td>
+          <td><span class="badge ${u.active ? "badge--published" : "badge--inactive"}">${u.active ? "Aktivní" : "Neaktivní"}</span></td>
+          <td class="actions">
+            <button type="button" class="btn btn--ghost btn--sm" data-toggle="${u.id}">
+              ${u.active ? "Deaktivovat" : "Aktivovat"}
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    render();
+
+    document.querySelector("#users-table tbody").addEventListener("click", (e) => {
+      const id = e.target.getAttribute("data-toggle");
+      if (!id) return;
+      const user = AdminMock.users.find((u) => u.id === id);
+      if (!user) return;
+      user.active = !user.active;
+      const alert = document.getElementById("user-alert");
+      alert.textContent = user.active
+        ? `Účet ${user.email} byl aktivován (prototyp).`
+        : `Účet ${user.email} byl deaktivován (prototyp).`;
+      alert.classList.remove("alert--hidden");
+      render();
+    });
+
+    const modal = document.getElementById("user-modal");
+    function openModal() {
+      modal.classList.add("is-open");
+      modal.setAttribute("aria-hidden", "false");
+    }
+    function closeModal() {
+      modal.classList.remove("is-open");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    document.getElementById("btn-add-user").addEventListener("click", openModal);
+    modal.querySelectorAll("[data-close]").forEach((el) => el.addEventListener("click", closeModal));
+
+    document.getElementById("user-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("user-name").value.trim();
+      const email = document.getElementById("user-email").value.trim();
+      const role = document.getElementById("user-role").value;
+      AdminMock.users.push({
+        id: "u" + Date.now(),
+        name,
+        email,
+        role,
+        active: true,
+      });
+      closeModal();
+      e.target.reset();
+      const alert = document.getElementById("user-alert");
+      alert.textContent = `Pozvánka pro ${email} připravena (prototyp – e-mail se neodesílá).`;
+      alert.classList.remove("alert--hidden");
+      render();
+    });
+  </script>
+</body>
+</html>

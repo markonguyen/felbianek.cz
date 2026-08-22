@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Přehled | Felbiánek Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body class="app">
+  <div id="admin-shell">
+    <div id="page-actions">
+      <a class="btn btn--primary btn--sm" href="novinky/edit.html">Nová novinka</a>
+    </div>
+
+    <div class="page-header">
+      <div>
+        <h2>Vítejte</h2>
+        <p>Rychlý přehled obsahu webu Felbiánek.</p>
+      </div>
+    </div>
+
+    <section class="panel">
+      <div class="panel__header">
+        <h2>Poslední novinky</h2>
+        <a class="btn btn--secondary btn--sm" href="novinky/index.html">Všechny novinky</a>
+      </div>
+      <div class="table-wrap">
+        <table class="data" id="recent-news">
+          <thead>
+            <tr>
+              <th>Název</th>
+              <th>Stav</th>
+              <th>Datum</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__header">
+        <h2>Koncepty ke dokončení</h2>
+      </div>
+      <ul class="stack-sm" id="drafts" style="list-style:none;padding:0;margin:0"></ul>
+    </section>
+  </div>
+
+  <script src="../assets/js/mock-data.js"></script>
+  <script src="../assets/js/nav.js"></script>
+  <script>
+    AdminShell.init({ active: "prehled", title: "Přehled" });
+
+    const active = AdminMock.activeNews();
+    const tbody = document.querySelector("#recent-news tbody");
+    active.slice(0, 5).forEach((n) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${n.title}</td>
+        <td><span class="badge badge--${n.status}">${AdminMock.statusLabel(n.status)}</span></td>
+        <td class="list-meta">${AdminMock.formatDate(n.publishedAt)}</td>
+        <td class="actions"><a class="btn btn--ghost btn--sm" href="novinky/edit.html?id=${n.id}">Upravit</a></td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    const drafts = active.filter((n) => n.status === "draft");
+    const draftsEl = document.getElementById("drafts");
+    if (!drafts.length) {
+      draftsEl.innerHTML = '<li class="list-meta">Žádné koncepty.</li>';
+    } else {
+      drafts.forEach((n) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<a href="novinky/edit.html?id=${n.id}">${n.title}</a>`;
+        draftsEl.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>

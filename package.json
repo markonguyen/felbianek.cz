@@ -1,0 +1,9 @@
+{
+  "name": "felbianek-web",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "admin": "npx --yes serve admin -p 5173",
+    "web": "npx --yes serve web -p 4173"
+  }
+}

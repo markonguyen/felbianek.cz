@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Upravit stránku | Felbiánek Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="app">
+  <div id="admin-shell">
+    <div class="page-header">
+      <div>
+        <h2 id="page-title">Stránka</h2>
+        <p>Upravte textové bloky a základní SEO. Bez zbytečných voleb.</p>
+      </div>
+      <a class="btn btn--ghost btn--sm" href="index.html">Zpět na seznam</a>
+    </div>
+
+    <div class="alert alert--success alert--hidden" id="saved-alert">Stránka uložena (prototyp).</div>
+
+    <form id="page-form" class="form-stack">
+      <section class="panel">
+        <h2>Obsah</h2>
+        <div class="form-stack" id="blocks" style="margin-top:1rem"></div>
+      </section>
+
+      <section class="panel">
+        <h2>SEO</h2>
+        <div class="form-stack" style="margin-top:1rem">
+          <div class="field">
+            <label for="seoTitle">Titulek stránky</label>
+            <input type="text" id="seoTitle" name="seoTitle">
+            <span class="hint">Zobrazí se v záložce prohlížeče a ve výsledcích vyhledávání.</span>
+          </div>
+          <div class="field">
+            <label for="seoDescription">Popis</label>
+            <textarea id="seoDescription" name="seoDescription" rows="3"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <div class="btn-group btn-group--end">
+        <button type="submit" class="btn btn--primary">Uložit</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="../../assets/js/mock-data.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script>
+    AdminShell.init({ active: "stranky-edit", title: "Stránka" });
+
+    const id = new URLSearchParams(location.search).get("id") || "p1";
+    const page = AdminMock.pages.find((p) => p.id === id) || AdminMock.pages[0];
+
+    document.getElementById("page-title").textContent = page.title;
+    document.getElementById("seoTitle").value = page.seoTitle || "";
+    document.getElementById("seoDescription").value = page.seoDescription || "";
+
+    const blocksEl = document.getElementById("blocks");
+    page.blocks.forEach((block, index) => {
+      const wrap = document.createElement("div");
+      wrap.className = "field";
+      wrap.innerHTML = `
+        <label for="block-${index}">${block.label}</label>
+        <textarea id="block-${index}" name="block-${index}" rows="5">${block.content}</textarea>
+      `;
+      blocksEl.appendChild(wrap);
+    });
+
+    document.getElementById("page-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      document.getElementById("saved-alert").classList.remove("alert--hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  </script>
+</body>
+</html>

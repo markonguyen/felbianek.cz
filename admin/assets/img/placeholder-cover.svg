@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200" viewBox="0 0 320 200" role="img" aria-label="Náhled obrázku">
+  <rect width="320" height="200" fill="#d8e2dc"/>
+  <rect x="24" y="24" width="272" height="152" rx="12" fill="#b7e4c7"/>
+  <circle cx="96" cy="88" r="28" fill="#52b788"/>
+  <path d="M40 160 L120 100 L160 130 L220 70 L280 160 Z" fill="#2d6a4f" opacity="0.85"/>
+  <text x="160" y="188" text-anchor="middle" fill="#1b4332" font-family="Nunito,sans-serif" font-size="12">Náhled obrázku</text>
+</svg>

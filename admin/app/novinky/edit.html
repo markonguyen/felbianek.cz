@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Upravit novinku | Felbiánek Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="app">
+  <div id="admin-shell">
+    <div class="page-header">
+      <div>
+        <h2 id="form-heading">Nová novinka</h2>
+        <p>Text můžete zvýraznit, dát tučně nebo přidat odkaz. Obrázek a příloha jsou volitelné.</p>
+      </div>
+      <a class="btn btn--ghost btn--sm" href="index.html">Zpět na seznam</a>
+    </div>
+
+    <div class="alert alert--success alert--hidden" id="saved-alert">Změny uloženy (prototyp – data se nepersistují na server).</div>
+
+    <form id="news-form" class="form-stack">
+      <section class="panel">
+        <div class="form-stack">
+          <div class="field">
+            <label for="title">Nadpis</label>
+            <input type="text" id="title" name="title" required placeholder="Krátký a srozumitelný nadpis">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="badge">Štítek</label>
+              <input type="text" id="badge" name="badge" placeholder="např. Zápis, Akce">
+              <span class="hint">Krátký štítek u karty na webu.</span>
+            </div>
+            <div class="field">
+              <label for="publishedAt">Datum</label>
+              <input type="date" id="publishedAt" name="publishedAt">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Text novinky</label>
+            <div class="rte" id="rte">
+              <div class="rte__toolbar" role="toolbar" aria-label="Formátování">
+                <button type="button" data-cmd="bold" title="Tučně"><b>B</b></button>
+                <button type="button" data-cmd="italic" title="Kurzíva"><i>I</i></button>
+                <button type="button" data-cmd="insertUnorderedList" title="Odrážky">• Seznam</button>
+                <button type="button" data-cmd="createLink" title="Odkaz">Odkaz</button>
+                <button type="button" data-cmd="highlight" title="Zvýraznění">Zvýraznit</button>
+              </div>
+              <div class="rte__editor" contenteditable="true" data-placeholder="Napište text novinky…" role="textbox" aria-multiline="true"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Obrázek a příloha</h2>
+        <div class="form-stack" style="margin-top:1rem">
+          <div class="field">
+            <label>Úvodní obrázek</label>
+            <div class="btn-group">
+              <button type="button" class="btn btn--secondary btn--sm" id="pick-image">Vybrat z médií</button>
+              <button type="button" class="btn btn--ghost btn--sm" id="clear-image">Odstranit</button>
+            </div>
+            <div id="cover-preview" class="stack-sm" style="margin-top:0.75rem"></div>
+          </div>
+          <div class="field">
+            <label>Příloha (PDF / soubor)</label>
+            <div class="btn-group">
+              <button type="button" class="btn btn--secondary btn--sm" id="pick-file">Přidat přílohu</button>
+            </div>
+            <ul id="attachments" class="stack-sm" style="list-style:none;padding:0;margin:0.75rem 0 0"></ul>
+          </div>
+        </div>
+      </section>
+
+      <div class="btn-group btn-group--end">
+        <button type="button" class="btn btn--secondary" id="btn-preview">Náhled</button>
+        <button type="button" class="btn btn--secondary" id="btn-draft">Uložit koncept</button>
+        <button type="submit" class="btn btn--primary">Zveřejnit</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal" id="preview-modal" aria-hidden="true">
+    <div class="modal__backdrop" data-close></div>
+    <div class="modal__dialog modal__dialog--wide" role="dialog" aria-labelledby="preview-title">
+      <div class="modal__header">
+        <h2 id="preview-title">Náhled na webu</h2>
+        <button type="button" class="btn btn--ghost btn--sm" data-close>Zavřít</button>
+      </div>
+      <article class="preview-card" id="preview-body"></article>
+    </div>
+  </div>
+
+  <script src="../../assets/js/mock-data.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script src="../../assets/js/editor-toolbar.js"></script>
+  <script>
+    AdminShell.init({ active: "novinky-edit", title: "Novinka" });
+    AdminEditor.init(document.getElementById("rte"));
+
+    const params = new URLSearchParams(location.search);
+    const id = params.get("id");
+    let item = id ? AdminMock.news.find((n) => n.id === id && !n.deletedAt) : null;
+    let coverImage = item?.coverImage || null;
+    let attachments = item ? [...(item.attachments || [])] : [];
+
+    if (item) {
+      document.getElementById("form-heading").textContent = "Upravit novinku";
+      document.getElementById("title").value = item.title;
+      document.getElementById("badge").value = item.badge || "";
+      document.getElementById("publishedAt").value = item.publishedAt || "";
+      AdminEditor.setHtml(document.getElementById("rte"), item.bodyHtml);
+    } else {
+      document.getElementById("publishedAt").value = new Date().toISOString().slice(0, 10);
+    }
+
+    function renderCover() {
+      const el = document.getElementById("cover-preview");
+      if (!coverImage) {
+        el.innerHTML = '<span class="list-meta">Bez obrázku</span>';
+        return;
+      }
+      const src = coverImage.startsWith("http") || coverImage.startsWith("../")
+        ? coverImage
+        : "../../assets/img/placeholder-cover.svg";
+      el.innerHTML = `<img src="${src}" alt="" style="max-width:12rem;border-radius:0.5rem;border:1px solid var(--color-border)">`;
+    }
+
+    function renderAttachments() {
+      const el = document.getElementById("attachments");
+      if (!attachments.length) {
+        el.innerHTML = '<li class="list-meta">Bez přílohy</li>';
+        return;
+      }
+      el.innerHTML = attachments
+        .map(
+          (a, i) =>
+            `<li>${a.name} <span class="list-meta">(${a.size || "soubor"})</span>
+              <button type="button" class="btn btn--ghost btn--sm" data-remove-att="${i}">Odebrat</button></li>`
+        )
+        .join("");
+    }
+
+    renderCover();
+    renderAttachments();
+
+    document.getElementById("attachments").addEventListener("click", (e) => {
+      const i = e.target.getAttribute("data-remove-att");
+      if (i != null) {
+        attachments.splice(Number(i), 1);
+        renderAttachments();
+      }
+    });
+
+    document.getElementById("pick-image").addEventListener("click", () => {
+      coverImage = "../../assets/img/placeholder-cover.svg";
+      renderCover();
+    });
+
+    document.getElementById("clear-image").addEventListener("click", () => {
+      coverImage = null;
+      renderCover();
+    });
+
+    document.getElementById("pick-file").addEventListener("click", () => {
+      attachments.push({ name: "Priloha.pdf", size: "120 KB" });
+      renderAttachments();
+    });
+
+    function gather() {
+      return {
+        title: document.getElementById("title").value.trim(),
+        badge: document.getElementById("badge").value.trim(),
+        publishedAt: document.getElementById("publishedAt").value,
+        bodyHtml: AdminEditor.getHtml(document.getElementById("rte")),
+        coverImage,
+        attachments,
+      };
+    }
+
+    function showSaved(msg) {
+      const alert = document.getElementById("saved-alert");
+      alert.textContent = msg;
+      alert.classList.remove("alert--hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.getElementById("btn-draft").addEventListener("click", () => {
+      const data = gather();
+      if (!data.title) {
+        document.getElementById("title").focus();
+        return;
+      }
+      showSaved("Koncept uložen (prototyp).");
+    });
+
+    document.getElementById("news-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = gather();
+      if (!data.title) {
+        document.getElementById("title").focus();
+        return;
+      }
+      showSaved("Novinka zveřejněna (prototyp).");
+    });
+
+    const modal = document.getElementById("preview-modal");
+    document.getElementById("btn-preview").addEventListener("click", () => {
+      const data = gather();
+      document.getElementById("preview-body").innerHTML = `
+        ${data.badge ? `<span class="badge-label">${data.badge}</span>` : ""}
+        <h3>${data.title || "Bez názvu"}</h3>
+        <time>${AdminMock.formatDate(data.publishedAt)}</time>
+        <div>${data.bodyHtml || "<p class='list-meta'>Bez textu</p>"}</div>
+        ${
+          attachments.length
+            ? `<p style="margin-top:1rem"><strong>Přílohy:</strong> ${attachments.map((a) => a.name).join(", ")}</p>`
+            : ""
+        }
+      `;
+      modal.classList.add("is-open");
+      modal.setAttribute("aria-hidden", "false");
+    });
+
+    modal.querySelectorAll("[data-close]").forEach((el) => {
+      el.addEventListener("click", () => {
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+      });
+    });
+  </script>
+</body>
+</html>

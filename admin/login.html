@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Přihlášení | Felbiánek Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <div class="auth-brand__mark" aria-hidden="true">F</div>
+        <h1>Felbiánek Admin</h1>
+        <p>Přihlaste se e-mailem a heslem</p>
+      </div>
+
+      <div class="alert alert--info alert--hidden" id="demo-hint">
+        Prototyp: libovolný e-mail a heslo (min. 6 znaků) vás pustí dál.
+      </div>
+
+      <form class="form-stack" id="login-form" novalidate>
+        <div class="field" id="field-email">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" name="email" autocomplete="username" required placeholder="vas@email.cz">
+          <span class="field-error">Zadejte platný e-mail.</span>
+        </div>
+        <div class="field" id="field-password">
+          <label for="password">Heslo</label>
+          <input type="password" id="password" name="password" autocomplete="current-password" required minlength="6" placeholder="••••••••">
+          <span class="field-error">Heslo musí mít alespoň 6 znaků.</span>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="remember" name="remember">
+          <label for="remember">Zapamatovat přihlášení</label>
+        </div>
+        <button type="submit" class="btn btn--primary btn--block">Přihlásit se</button>
+      </form>
+
+      <p class="auth-footer">
+        <a href="forgot-password.html">Zapomenuté heslo</a>
+      </p>
+    </div>
+  </div>
+  <script>
+    document.getElementById("demo-hint").classList.remove("alert--hidden");
+    document.getElementById("login-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const emailField = document.getElementById("field-email");
+      const passField = document.getElementById("field-password");
+      const email = document.getElementById("email");
+      const password = document.getElementById("password");
+      let ok = true;
+
+      emailField.classList.toggle("is-invalid", !email.validity.valid);
+      if (!email.validity.valid) ok = false;
+
+      passField.classList.toggle("is-invalid", password.value.length < 6);
+      if (password.value.length < 6) ok = false;
+
+      if (!ok) return;
+      sessionStorage.setItem("felbianek_admin_session", "1");
+      window.location.href = "app/index.html";
+    });
+  </script>
+</body>
+</html>

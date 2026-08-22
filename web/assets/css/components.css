@@ -1,0 +1,318 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: 0.8rem 1.6rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn--primary {
+  background: var(--color-forest);
+  color: var(--color-cream);
+}
+
+.btn--primary:hover {
+  color: var(--color-cream);
+  background: var(--color-forest-dark);
+}
+
+.btn--accent {
+  background: var(--color-brick);
+  color: var(--color-white);
+}
+
+.btn--accent:hover {
+  color: var(--color-white);
+  background: var(--color-wine);
+}
+
+.btn--outline {
+  background: transparent;
+  color: var(--color-forest);
+  border: 2px solid var(--color-forest);
+}
+
+.btn--outline:hover {
+  background: var(--color-forest);
+  color: var(--color-cream);
+}
+
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.card--link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.card--link:hover {
+  color: inherit;
+}
+
+.card__icon {
+  font-size: 2rem;
+  margin-bottom: var(--space-sm);
+}
+
+.card-grid {
+  display: grid;
+  gap: var(--space-lg);
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: var(--radius-md);
+  background: var(--color-mustard);
+  color: var(--color-forest);
+}
+
+.cta-box {
+  background: var(--color-forest);
+  color: var(--color-cream);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  border: none;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-box h2 {
+  margin-bottom: var(--space-sm);
+  color: var(--color-cream);
+}
+
+.cta-box p {
+  color: rgba(244, 233, 220, 0.88);
+}
+
+.team-card {
+  text-align: center;
+}
+
+.team-card img {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 0 auto var(--space-md);
+  border: 3px solid var(--color-olive-light);
+}
+
+.team-card h3 {
+  margin-bottom: var(--space-xs);
+  font-size: 1.1rem;
+}
+
+.team-card .role {
+  font-size: 0.875rem;
+  color: var(--color-ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: var(--space-xs);
+}
+
+.team-card a[href^="mailto"] {
+  font-size: 0.9rem;
+}
+
+.partner-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-lg);
+  align-items: center;
+}
+
+.partner-grid a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  min-height: 100px;
+  transition: box-shadow 0.2s;
+}
+
+.partner-grid a:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.partner-grid img {
+  max-height: 70px;
+  width: auto;
+  object-fit: contain;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-md);
+}
+
+.gallery-grid a {
+  display: block;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  aspect-ratio: 4/3;
+}
+
+.gallery-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.gallery-grid a:hover img {
+  transform: scale(1.05);
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(39, 52, 34, 0.92);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.lightbox.is-open {
+  display: flex;
+}
+
+.lightbox img {
+  max-height: 90vh;
+  max-width: min(90vw, 56rem);
+  border-radius: var(--radius-md);
+  pointer-events: none;
+}
+
+.lightbox__close,
+.lightbox__prev,
+.lightbox__next {
+  position: absolute;
+  background: var(--color-cream);
+  border: none;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--color-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.lightbox__close {
+  top: var(--space-md);
+  right: var(--space-md);
+}
+
+.lightbox__prev,
+.lightbox__next {
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
+}
+
+.lightbox__prev {
+  left: var(--space-md);
+}
+
+.lightbox__next {
+  right: var(--space-md);
+}
+
+.lightbox__prev:disabled,
+.lightbox__next:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+@media (max-width: 640px) {
+  .lightbox__prev,
+  .lightbox__next {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.75rem;
+  }
+}
+
+.content-table {
+  overflow-x: auto;
+}
+
+.breadcrumb {
+  font-size: 0.9rem;
+  color: var(--color-ink-muted);
+  margin-bottom: var(--space-lg);
+}
+
+.breadcrumb a {
+  color: var(--color-ink-muted);
+}
+
+.subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+}
+
+.subnav a {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.subnav a:hover,
+.subnav a.is-active {
+  background: var(--color-olive-light);
+  border-color: var(--color-olive);
+  color: var(--color-forest);
+}
+
